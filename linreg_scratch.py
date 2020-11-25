@@ -31,7 +31,16 @@ def model(x):
   return x @ w.t() + b
 
 preds = model(inputs)
-loss = mse(preds, target)
+
+# Defining the loss function
+
+# MSE Loss:
+
+def mse(t1, t2):
+  diff = t1 - t2
+  return torch.sum(diff*diff)/diff.numel()
+
+loss = mse(preds, targets)
 
 print('Loss before optimization: ', loss)
 
@@ -44,21 +53,15 @@ print('Loss before optimization: ', loss)
 #w.grad   #gradient w.r.t w
 #b.grad   #gradient w.r.t b
 
-# Defining the loss function
-
-# MSE Loss:
-
-def mse(t1, t2):
-  diff = t1 - t2
-  return torch.sum(diff*diff)/diff.numel()
-
 for i in range(100):
   preds = model(inputs)
   loss = mse(preds, targets)
   loss.backward()
+  if (i%10) == 0:
+    print('Loss after %d iterations: '%i, loss)
   with torch.no_grad():
-    w -= w.grad + 1e-5
-    b -= b.grad + 1e-5
+    w -= w.grad * 1e-5
+    b -= b.grad * 1e-5
     w.grad.zero_()
     b.grad.zero_()
 
