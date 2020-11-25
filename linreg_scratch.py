@@ -2,17 +2,17 @@ import numpy as np
 import torch
 
 # Input (temp, rainfall, humidity)
-inputs = np.array([[73, 67, 43], 
-                   [91, 88, 64], 
-                   [87, 134, 58], 
-                   [102, 43, 37], 
+inputs = np.array([[73, 67, 43],
+                   [91, 88, 64],
+                   [87, 134, 58],
+                   [102, 43, 37],
                    [69, 96, 70]], dtype='float32')
 
 # Targets (apples, oranges)
-targets = np.array([[56, 70], 
-                    [81, 101], 
-                    [119, 133], 
-                    [22, 37], 
+targets = np.array([[56, 70],
+                    [81, 101],
+                    [119, 133],
+                    [22, 37],
                     [103, 119]], dtype='float32')
 
 # Converting to Tensors
@@ -22,13 +22,15 @@ targets = torch.from_numpy(targets)
 
 # Defining the weights and biases
 
-w = torch.randn(2, 3, requires_grad = True)
-b = torch.randn(2, requires_grad = True)
+w = torch.randn(2, 3, requires_grad=True)
+b = torch.randn(2, requires_grad=True)
 
 # Defining the model
 
+
 def model(x):
-  return x @ w.t() + b
+    return x @ w.t() + b
+
 
 preds = model(inputs)
 
@@ -36,9 +38,11 @@ preds = model(inputs)
 
 # MSE Loss:
 
+
 def mse(t1, t2):
-  diff = t1 - t2
-  return torch.sum(diff*diff)/diff.numel()
+    diff = t1 - t2
+    return torch.sum(diff*diff)/diff.numel()
+
 
 loss = mse(preds, targets)
 
@@ -46,24 +50,24 @@ print('Loss before optimization: ', loss)
 
 # For a step backwards:
 
-#loss.backward()
+# loss.backward()
 
 # To get gradient of loss
 
-#w.grad   #gradient w.r.t w
-#b.grad   #gradient w.r.t b
+# w.grad   #gradient w.r.t w
+# b.grad   #gradient w.r.t b
 
 for i in range(100):
-  preds = model(inputs)
-  loss = mse(preds, targets)
-  loss.backward()
-  if (i%10) == 0:
-    print('Loss after %d iterations: '%i, loss)
-  with torch.no_grad():
-    w -= w.grad * 1e-5
-    b -= b.grad * 1e-5
-    w.grad.zero_()
-    b.grad.zero_()
+    preds = model(inputs)
+    loss = mse(preds, targets)
+    loss.backward()
+    if (i % 10) == 0:
+        print('Loss after %d iterations: ' % i, loss)
+    with torch.no_grad():
+        w -= w.grad * 1e-5
+        b -= b.grad * 1e-5
+        w.grad.zero_()
+        b.grad.zero_()
 
 preds = model(inputs)
 loss = mse(preds, targets)
